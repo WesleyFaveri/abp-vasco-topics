@@ -1,0 +1,42 @@
+{
+  "name": "topics-back",
+  "version": "1.0.0",
+  "description": "Projeto para a ABP da disciplina de Tópicos Especiais",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/index.js --exec babel-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WesleyFaveri/abp-vasco-topics/issues"
+  },
+  "homepage": "https://github.com/WesleyFaveri/abp-vasco-topics#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "method-override": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/eslint-plugin": "^7.14.5",
+    "@babel/node": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "eslint": "^8.1.0",
+    "eslint-import-resolver-babel-module": "^5.3.1",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-module-resolver": "^1.4.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.1",
+    "eslint-plugin-standard": "^5.0.0",
+    "nodemon": "^2.0.14"
+  }
+}
