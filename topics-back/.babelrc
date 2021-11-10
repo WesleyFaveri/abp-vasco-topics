@@ -8,7 +8,10 @@
         "root": ["./src"],
         "extensions": [".js", ".json"],
         "cwd": "babelrc",
-        "alias": {}
+        "alias": {
+          "controllers": "./src/controllers",
+          "models": "./models"
+        }
       }]
     ],
   }
