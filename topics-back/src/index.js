@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import sdk from './sdk';
+import { AuthMiddleware } from './middlewares';
 
 require('dotenv').config()
 
@@ -13,6 +14,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
+
+app.use(AuthMiddleware)
 
 const httpServer = http.createServer(sdk(app));
 
