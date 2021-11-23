@@ -57,10 +57,39 @@ const destroy = async (req, res) => {
   res.json({ success: !!result });
 };
 
+const findCreateUpdate = async (user) => {
+  const dbUser = await User.findOne({
+    where: {
+      email: user.email,
+    }
+  });
+
+  if (dbUser) {
+    const newUser = await User.update(user, {
+      where: {
+        id,
+      },
+    });
+
+    return { ...newUser, created: false };
+  } else {
+    const newUser = await User.create(user);
+
+    return { ...newUser, created: false };
+  }
+}
+
+const find = async (sessionId) => {
+  const user = await Users.findOne({ where: { id: sessionId }});
+
+  return user;
+}
+
 export default {
   listAll,
   findOne,
   create,
   update,
   destroy,
+  find,
 };

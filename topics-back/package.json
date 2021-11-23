@@ -16,10 +16,13 @@
   "homepage": "https://github.com/WesleyFaveri/abp-vasco-topics#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-formidable": "^1.2.0",
+    "express-session": "^1.17.2",
+    "google-auth-library": "^7.10.2",
     "method-override": "^3.0.0",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
