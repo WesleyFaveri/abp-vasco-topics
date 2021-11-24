@@ -13,29 +13,7 @@ async function validateUser (req, res, next) {
   next();
 }
 
-const verifyToken = (req, res, next) => {
-  const { 'x-access-token': token } = req.headers;
-  console.log(token);
-
-  if (!token) {
-    return res.status(403).send({
-      message: "No token provided!"
-    });
-  }
-
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({
-        message: "Unauthorized!"
-      });
-    }
-    req.session.userId = decoded.id;
-
-    next();
-  });
-};
-
 export default {
   validateUser,
-  authMiddleware: verifyToken,
+  tokenMiddleware: expressJwt({ secret: process.env.TOKEN_SECRET, algorithms: ["HS256"] }),
 };
