@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
 
-app.use(AuthMiddleware)
+app.use(AuthMiddleware.validateUser)
 
 const httpServer = http.createServer(sdk(app));
 

@@ -1,5 +1,5 @@
 import models from 'models';
-
+import { encryptSHA256 } from 'utils';
 const { User } = models;
 
 const DEFAULT_ATTR = ['id', 'name', 'surname', 'email', 'createdAt'];
@@ -27,10 +27,17 @@ const findOne = async (req, res) => {
   }
 };
 
-const create = async (req, res) => {
-  const newUser = await User.create(req.body);
+const create = async (req, res, returnReq = true) => {
+  const newUser = await User.create({
+    ...req.body,
+    password: encryptSHA256(req.body.password),
+  });
 
-  return res.json(newUser);
+  if (returnReq) {
+    return res.json(newUser);
+  }
+
+  return newUser;
 };
 
 const update = async (req, res) => {
@@ -80,10 +87,19 @@ const findCreateUpdate = async (user) => {
 }
 
 const find = async (sessionId) => {
-  const user = await Users.findOne({ where: { id: sessionId }});
+  const user = await User.findOne({ where: { id: sessionId }});
 
   return user;
 }
+
+const findByEmailPassword = (email, password) => User.findOne({
+  attributes: ["id", "name", "email"],
+  where: {
+    email,
+    password: encryptSHA256(password),
+  },
+  raw: true,
+});
 
 export default {
   listAll,
@@ -92,4 +108,5 @@ export default {
   update,
   destroy,
   find,
+  findByEmailPassword,
 };

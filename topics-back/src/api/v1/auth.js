@@ -1,6 +1,7 @@
 import express from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { Users } from 'controllers';
+import jwt from 'jsonwebtoken';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -52,9 +53,54 @@ const get = async (req, res) => {
   }
 };
 
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await Users.findByEmailPassword(email, password);
+
+    if (!!user) {
+      const token = jwt.sign(user, process.env.TOKEN_SECRET);
+
+      res.json({
+        user,
+        token,
+        success: true,
+        error: false,
+      });
+    } else {
+      res.status(401).json({ error: "Usuário e/ou Senha inválido(s)" });
+    }
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export const register = async (req, res) => {
+  try {
+    const { name, surname, email, password } = req.body;
+
+    const user = await Users.create(req, res, false);
+
+    const token = jwt.sign(user.toJSON(), process.env.TOKEN_SECRET);
+
+    res.json({
+      user,
+      token,
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 router.post('/google', post);
-router.delete('/logout', post);
-router.get('/me', get)
+router.delete('/logout', deleteApi);
+router.get('/me', get);
+router.post('/login', login);
+router.post('/register', register);
 
 app.use(DEFAULT_PATH, router);
 
