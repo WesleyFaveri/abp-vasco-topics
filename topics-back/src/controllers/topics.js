@@ -2,10 +2,32 @@ import models from 'models';
 
 const { Topic, User } = models;
 
-const listAll = async (req, res) => {
-  const topics = await Topic.findAll({ order: [["createdAt", "DESC"]], include: [User] });
+const DEFAULT_LIMIT = 50;
+const DEFAULT_OFFSET = 0;
 
-  return res.json(topics);
+const getLimitOffset = ({ query }) => {
+  if (query && query.limit && query.offset) {
+    return {
+      limit: query.limit,
+      offset: query.offset,
+    };
+  }
+
+  return {
+    limit: DEFAULT_LIMIT,
+    offset: DEFAULT_OFFSET,
+  };
+}
+
+const listAll = async (req, res) => {
+  const { limit, offset } = getLimitOffset(req);
+
+  const result = await Topic.findAndCountAll({ order: [["createdAt", "DESC"]], limit, offset, include: [User] });
+
+  result.topics = result.rows
+  delete result.rows
+
+  return res.json(result);
 };
 
 const listMine = async (req, res) => {
