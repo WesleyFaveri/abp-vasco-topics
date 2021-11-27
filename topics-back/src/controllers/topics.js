@@ -1,9 +1,9 @@
 import models from 'models';
 
-const { Topic } = models;
+const { Topic, User } = models;
 
 const listAll = async (req, res) => {
-  const topics = await Topic.findAll({ order: [["createdAt", "DESC"]] });
+  const topics = await Topic.findAll({ order: [["createdAt", "DESC"]], include: [User] });
 
   return res.json(topics);
 };
