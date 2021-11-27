@@ -10,7 +10,9 @@
         "cwd": "babelrc",
         "alias": {
           "controllers": "./src/controllers",
-          "models": "./models"
+          "models": "./models",
+          "utils": "./src/utils",
+          "middlewares": "./src/middlewares",
         }
       }]
     ],
