@@ -2,6 +2,7 @@ import express from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { Users } from 'controllers';
 import jwt from 'jsonwebtoken';
+import { AuthMiddleware } from 'middlewares';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -47,7 +48,7 @@ const deleteApi = async (req, res) => {
 const get = async (req, res) => {
   try {
     res.status(200)
-    res.json(req.user)
+    res.json({ user: req.user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -98,7 +99,7 @@ export const register = async (req, res) => {
 
 router.post('/google', post);
 router.delete('/logout', deleteApi);
-router.get('/me', get);
+router.get('/me', AuthMiddleware.tokenMiddleware, get);
 router.post('/login', login);
 router.post('/register', register);
 
