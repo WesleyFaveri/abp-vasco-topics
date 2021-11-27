@@ -8,6 +8,14 @@ const listAll = async (req, res) => {
   return res.json(topics);
 };
 
+const listMine = async (req, res) => {
+  const { user: { id: userId } } = req;
+
+  const topics = await Topic.findAll({ order: [["createdAt", "DESC"]], where: { UserId: userId }, include: [User] });
+
+  return res.json(topics);
+};
+
 const findOne = async (req, res) => {
   const { id } = req.params;
 
@@ -56,6 +64,7 @@ const destroy = async (req, res) => {
 
 export default {
   listAll,
+  listMine,
   findOne,
   create,
   update,

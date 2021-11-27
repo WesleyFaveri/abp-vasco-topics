@@ -8,6 +8,7 @@ const app = express();
 const router = express.Router();
 
 router.get('', Topics.listAll);
+router.get('/me', Topics.listMine);
 router.get('/:id', Topics.findOne);
 router.post('', Topics.create);
 router.put('/:id', Topics.update);
