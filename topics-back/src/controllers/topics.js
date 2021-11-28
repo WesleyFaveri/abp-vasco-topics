@@ -87,14 +87,24 @@ const update = async (req, res) => {
 
 const destroy = async (req, res) => {
   const { id } = req.params;
+  const { user: { id: UserId } } = req;
 
-  const result = await Topic.destroy({
-    where: {
-      id,
-    },
-  });
+  try {
+    const result = await Topic.destroy({
+      where: {
+        id,
+        UserId
+      },
+    });
+    if (result) {
+      res.json({ success: !!result });
+    } else {
+      return res.status(500).json({ error: 'Não foi possível encontrar o tópico' });
+    }
 
-  res.json({ success: !!result });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
 };
 
 export default {
