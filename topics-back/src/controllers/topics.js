@@ -31,9 +31,9 @@ const listAll = async (req, res) => {
 };
 
 const listMine = async (req, res) => {
-  const { user: { id: userId } } = req;
+  const { user: { id: UserId } } = req;
 
-  const topics = await Topic.findAll({ order: [["createdAt", "DESC"]], where: { UserId: userId }, include: [User] });
+  const topics = await Topic.findAll({ order: [["createdAt", "DESC"]], where: { UserId: UserId }, include: [User] });
 
   return res.json(topics);
 };
@@ -55,21 +55,34 @@ const findOne = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const newTopic = await Topic.create(req.body);
+  const { user: { id: UserId } } = req;
+  const newTopic = await Topic.create({ ...req.body, UserId });
 
   return res.json(newTopic);
 };
 
 const update = async (req, res) => {
   const { id } = req.params;
+  const { user: { id: UserId } } = req;
 
-  const newTopic = await Topic.update(req.body, {
-    where: {
-      id,
-    },
-  });
 
-  res.json({ topic: newTopic });
+  try {
+    const newTopic = await Topic.update(req.body, {
+      where: {
+        id,
+        UserId,
+      },
+      returning: true,
+    });
+
+    if (newTopic && newTopic[0] && newTopic[0] > 0) {
+      res.json({ topic: newTopic });
+    } else {
+      return res.status(500).json({ error: 'Não foi possível encontrar o tópico' });
+    }
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
 };
 
 const destroy = async (req, res) => {
