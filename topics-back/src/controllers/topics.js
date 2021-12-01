@@ -19,6 +19,18 @@ const getLimitOffset = ({ query }) => {
   };
 }
 
+const listAllUser = async (req, res) => {
+  const { limit, offset } = getLimitOffset(req);
+  const { id } = req.params;
+
+  const result = await Topic.findAndCountAll({ order: [["createdAt", "DESC"]], where: { UserId: id }, limit, offset, include: [User] });
+
+  result.topics = result.rows
+  delete result.rows
+
+  return res.json(result);
+};
+
 const listAll = async (req, res) => {
   const { limit, offset } = getLimitOffset(req);
 
@@ -110,6 +122,7 @@ const destroy = async (req, res) => {
 export default {
   listAll,
   listMine,
+  listAllUser,
   findOne,
   create,
   update,
