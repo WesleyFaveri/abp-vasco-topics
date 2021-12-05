@@ -5,21 +5,31 @@ import { Menubar } from 'primereact/menubar';
 import { Card } from 'primereact/card';
 import { Chip } from 'primereact/chip';
 import { Dialog } from 'primereact/dialog';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
+import { isAuthenticated, login, registerUser } from '../services/auth-service';
+import { useRouter } from 'next/router'
+import { Toast } from 'primereact/toast';
+import { isClientSide } from '../utils/application-utils';
 
 export default function Landing() {
 
     const [register, setRegister] = useState(false);
     const [login, setLogin] = useState(false);
+    const router = useRouter();
 
     const topBarButtons = function() {
-        return (
-            <>
-                <Button label="Registrar-se" onClick={() => setRegister(true)} className="p-button-outlined" style={{ marginRight: '5px' }}/>
-                <Button label="Login" onClick={() => setLogin(true)}/>
-            </>
-        );
+        if (isClientSide()) {
+            if (isAuthenticated()) return (
+                <Button label="Entrar" onClick={() => router.push('/home')}/>
+            );
+            return (
+                <>
+                    <Button label="Registrar-se" onClick={() => setRegister(true)} className="p-button-outlined" style={{ marginRight: '5px' }}/>
+                    <Button label="Login" onClick={() => setLogin(true)}/>
+                </>
+            );
+        }
     }
 
     return (
@@ -86,18 +96,41 @@ export default function Landing() {
 
 function LoginModal(props) {
 
-    const [username, setUsername] = useState('');
+    const toast = useRef(null);
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const footer = (
         <div>
-            <Button disabled={!validationOk()} label="Entrar" icon="pi pi-check" onClick={props.onHide} />
+            <Button 
+                disabled={!validationOk()} 
+                label="Entrar" 
+                icon="pi pi-check" 
+                onClick={doLogin} 
+                loading={loading}/>
             <Button label="Cancelar" icon="pi pi-times" onClick={props.onHide} />
         </div>
     );
 
     function validationOk() {
-        return username.length && password.length;
+        return email.length && password.length;
+    }
+
+    function doLogin() {
+        setLoading(true);
+        login(email, password).then(() => {
+            router.push('/home');
+        }).catch(e => {
+            setLoading(false);
+            toast.current.show({
+                severity:'error', 
+                summary: 'Não foi possível realizar o login :(', 
+                detail: e.response.data.message, 
+                life: 3000
+            });
+        });
     }
 
     return (
@@ -114,10 +147,7 @@ function LoginModal(props) {
                 <div className="p-field p-col-12">
                     <label className="p-d-block">Username</label>
                     <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                            @
-                        </span>
-                        <InputText value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <InputText value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                 </div>
                 <div className="p-field p-col-12">
@@ -125,36 +155,66 @@ function LoginModal(props) {
                     <InputText type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
             </div>
+            <Toast ref={toast} position="bottom-right"/>
         </Dialog>
     );
 }
 
 function RegisterModal(props) {
 
+    const toast = useRef(null);
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const footer = (
         <div>
-            <Button disabled={!validationOk()} label="Registrar" icon="pi pi-check" onClick={props.onHide} />
+            <Button 
+                disabled={!validationOk()} 
+                label="Registrar" 
+                icon="pi pi-check" 
+                onClick={props.onHide} 
+                loading={loading}
+                onClick={doRegister}/>
             <Button label="Cancelar" icon="pi pi-times" onClick={props.onHide} />
         </div>
     );
 
     function validationOk() {
-        if (!name || !lastName || !username || !password || !passwordConfirm) {
+        if (!name || !lastName || !email || !password || !passwordConfirm) {
             return false;
         }
-        if (!name.length || !lastName.length || !username.length || !password.length || !passwordConfirm.length) {
+        if (!name.length || !lastName.length || !email.length || !password.length || !passwordConfirm.length) {
             return false;
         }
         if (passwordConfirm !== password) {
             return false;
         }
         return true;
+    }
+
+    function doRegister() {
+        setLoading(true);
+        registerUser({
+            name,
+            surname: lastName,
+            email,
+            password
+        }).then(() => {
+            router.push('/home');
+        }).catch(e => {
+            setLoading(false);
+            toast.current.show({
+                severity:'error', 
+                summary: 'Não foi possível realizar o cadastro :(', 
+                detail: e.response.data.message, 
+                life: 3000
+            });
+        });
     }
 
     return (
@@ -177,13 +237,8 @@ function RegisterModal(props) {
                     <InputText value={lastName} onChange={(e) => setLastName(e.target.value)} />
                 </div>
                 <div className="p-field p-col-12 p-md-4">
-                    <label className="p-d-block">Username</label>
-                    <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                            @
-                        </span>
-                        <InputText value={username} onChange={(e) => setUsername(e.target.value)} />
-                    </div>
+                    <label className="p-d-block">Email</label>
+                    <InputText value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className="p-field p-col-12 p-md-4">
                     <label className="p-d-block">Senha</label>
@@ -194,6 +249,7 @@ function RegisterModal(props) {
                     <InputText type="password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} />
                 </div>
             </div>
+            <Toast ref={toast} position="bottom-right"/>
         </Dialog>
     );
 }

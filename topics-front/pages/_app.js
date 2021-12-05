@@ -7,7 +7,7 @@ import Layout from './layouts/layout';
 
 function MyApp({ Component, pageProps }) {
     
-    if (Component.name === 'Landing') {
+    if (Component.name === 'Landing' || Component.name === 'Home2') {
         return (
             <Component {...pageProps} />
         );
