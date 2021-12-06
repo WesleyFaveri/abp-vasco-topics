@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken, logout } from "./auth-service";
+import { getToken } from "./auth-service";
 
 const prod = process.env.NODE_ENV === 'production';
 

@@ -1,12 +1,11 @@
 import { TabMenu } from 'primereact/tabmenu';
 import { Avatar } from 'primereact/avatar';
 import { useEffect, useState } from 'react';
-import { loggedUser } from '../../services/auth-service';
 import { isClientSide } from '../../utils/application-utils';
 import TopicCardLoader from '../../components/topic-card-loader';
 import TopicCard from '../../components/topic-card';
 import { useRouter } from 'next/router'
-import { getAllTopics, getAllTopicsFromUser } from '../../services/topics-service';
+import { getAllTopicsFromUser } from '../../services/topics-service';
 import { getUserById } from '../../services/user-service';
 import Loader from '../../components/loader';
 
@@ -101,7 +100,7 @@ function Topics() {
 
         return topics.map(t => (
             <>
-                <TopicCard id={t.id} content={t.content} title={t.title} user={t.User}/>
+                <TopicCard id={t.id} content={t.content} title={t.title} user={t.User} isMine={t.isMine}/>
                 <br/>
             </>
         ));

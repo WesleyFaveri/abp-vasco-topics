@@ -1,16 +1,13 @@
 import { Avatar } from 'primereact/avatar';
 import { TabMenu } from 'primereact/tabmenu';
-import { Menu } from 'primereact/menu';
 import { Card } from 'primereact/card';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { createTopic, getAllTopics } from '../services/topics-service';
-import Loader from '../components/loader';
 import TopicCard from '../components/topic-card';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import TopicCardLoader from '../components/topic-card-loader';
 import TopicWriter from '../components/topic-writer';
-import { VirtualScroller } from 'primereact/virtualscroller';
 
 const tabItens = [
     {label: 'Topics'},
@@ -83,7 +80,7 @@ const Content = forwardRef((props, ref) => {
 
         return topics.map(t => (
             <>
-                <TopicCard id={t.id} content={t.content} title={t.title} user={t.User}/>
+                <TopicCard id={t.id} content={t.content} title={t.title} user={t.User} isMine={t.isMine}/>
                 <br/>
             </>
         ));

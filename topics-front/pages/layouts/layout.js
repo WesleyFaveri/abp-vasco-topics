@@ -1,15 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import Head from 'next/head'
-import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button'
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { isAuthenticated, loggedUser, logout } from "../../services/auth-service";
 import { isClientSide } from "../../utils/application-utils";
 import { useRouter } from "next/router";
 import { Avatar } from 'primereact/avatar';
-import { TabMenu } from 'primereact/tabmenu';
 import { Menu } from 'primereact/menu';
-import { Card } from 'primereact/card';
 import { Skeleton } from 'primereact/skeleton';
 
 export default function Layout({ children }) {
