@@ -1,51 +1,123 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Head from 'next/head'
 import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button'
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { isAuthenticated, loggedUser, logout } from "../../services/auth-service";
+import { isClientSide } from "../../utils/application-utils";
+import { useRouter } from "next/router";
 import { Avatar } from 'primereact/avatar';
-import { Tooltip } from 'primereact/tooltip';
-
+import { TabMenu } from 'primereact/tabmenu';
+import { Menu } from 'primereact/menu';
+import { Card } from 'primereact/card';
+import { Skeleton } from 'primereact/skeleton';
 
 export default function Layout({ children }) {
+
+    const router = useRouter();
+    const [user, setUser] = useState();
+
+    useEffect(() => {
+        if (isClientSide()) {
+            if (!isAuthenticated()) {
+                router.push('/');
+                return;
+            }
+            loggedUser().then(u => setUser(u));
+        }
+    }, []);
+
     return (
-        <>
-            <Head>
-                <title>@usuario - Topics</title>
-                <meta name="description" content="Compartilhe o que você quiser" />
-                <link rel="icon" href="/favicon.png" />
-            </Head>
-            <TopBar/>
-            <div style={{ height: 54 }}></div>
-            {children}
-        </>
+        <div id="layout-screen">
+            <LateralMenu user={user}/>
+            <div id="layout-container">
+                <TopBar/>
+                <div id="layout-content-container">
+                    { children }
+                </div>
+            </div>
+        </div>
     );
+}
+
+function LateralMenu({ user }) {
+
+    const router = useRouter();
+
+    let menuItems = [
+        {label: 'Home', icon: 'pi pi-fw pi-home', command: () => router.push('/home')},
+        {label: 'Tags', icon: 'pi pi-fw pi-tag'},
+        {label: 'Descobrir', icon: 'pi pi-fw pi-globe'},
+        {label: 'Perfil', icon: 'pi pi-fw pi-user', command: () => router.push('/users/' + user.id)},
+    ];
+
+    function Top() {
+        if (!user) {
+            return (
+                <>
+                    <div style={{ width: 10 }}></div>
+                    <Skeleton size="3rem" className="p-mr-2"></Skeleton>
+                    <Skeleton width="10rem" className="p-mb-2"></Skeleton>
+                </>
+            );
+        }
+        return (
+            <>
+                <Avatar image="/avatar.svg" size="large"/>
+                <div className="username">{user.name}</div>
+            </>
+        );
+    }
+
+    return (
+        <div id="lateral-menu">
+            <div className="top">
+                <Top/>
+            </div>
+            <div className="middle">
+                <div className="button first">
+                    <div className="value">480</div>
+                    <div className="label">Topics</div>
+                </div>
+                <div className="button">
+                    <div className="value">480</div>
+                    <div className="label">Topics</div>
+                </div>
+            </div>
+            <div className="bottom">
+                <Menu model={menuItems} />
+            </div>
+        </div>
+    )
 }
 
 function TopBar() {
 
-    const endButtons = function() {
-        return (
-            <>
-                <Button icon="pi pi-bell" className="p-button-rounded" style={{ marginRight: 10 }}/>
-                <Avatar image="avatar.svg" shape="circle" onClick={() => alert('oi')}/>
-            </>
-        );
-    }
-
-    const start = function() {
-        return (
-            <>
-                <img src="top-bar.png" style={{ width: 30, margin: '0px 10px' }}/>
-                <Button 
-                    className="p-button-raised" 
-                    icon="pi pi-plus" 
-                    label="New Topic"
-                    style={{ marginLeft: 10 }}></Button>
-            </>
-        );
-    }
+    const op = useRef(null);
 
     return (
-        <Menubar id="top-bar" start={start} end={endButtons}/>
+        <>
+            <div id="layout-top-bar">
+                <div id="top-bar-logo">
+                    <img src="/top-bar2.png" style={{ height: 30 }}/>
+                </div>
+                <div className="top-bar-buttons">
+                    <div>
+                        <i className="pi pi-search"/>
+                    </div>
+                    <div onClick={(e) => op.current.toggle(e)}>
+                        <i className="pi pi-cog"/>
+                    </div>
+                </div>
+            </div>
+            <OverlayPanel 
+                ref={op} 
+                id="overlay_panel"
+                className="overlaypanel-demo">
+                <div>
+                    <Button onClick={() => logout()}>Sair</Button>
+                </div>
+            </OverlayPanel>
+        </>
     );
 }

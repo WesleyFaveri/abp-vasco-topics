@@ -2,6 +2,7 @@
   "name": "topics-front",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001/api",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,12 +10,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "next": "11.1.2",
     "primeflex": "^2.0.0",
     "primeicons": "^5.0.0",
     "primereact": "^7.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-html-parser": "^2.0.2",
     "react-transition-group": "^4.4.2"
   },
   "devDependencies": {
