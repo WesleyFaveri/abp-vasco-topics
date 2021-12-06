@@ -32,11 +32,12 @@ const listAllUser = async (req, res) => {
 };
 
 const listAll = async (req, res) => {
+  const { user: { id: UserId } } = req;
   const { limit, offset } = getLimitOffset(req);
 
-  const result = await Topic.findAndCountAll({ order: [["createdAt", "DESC"]], limit, offset, include: [User] });
+  const result = await Topic.findAndCountAll({ order: [["createdAt", "DESC"]], limit, offset, include: [User], raw: true, nest: true });
 
-  result.topics = result.rows
+  result.topics = result.rows.map(item => ({ ...item, isMine: Boolean(UserId === item.UserId) }))
   delete result.rows
 
   return res.json(result);
