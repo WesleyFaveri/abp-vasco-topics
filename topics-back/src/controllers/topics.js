@@ -20,13 +20,13 @@ const getLimitOffset = ({ query }) => {
 }
 
 const listAllUser = async (req, res) => {
+  const { user: { id: UserId } } = req;
   const { limit, offset } = getLimitOffset(req);
   const { id } = req.params;
 
-  const result = await Topic.findAndCountAll({ order: [["createdAt", "DESC"]], where: { UserId: id }, limit, offset, include: [User] });
-
-  result.topics = result.rows
-  delete result.rows
+  const result = await Topic.findAndCountAll({ order: [["createdAt", "DESC"]], where: { UserId: id }, limit, offset, include: [User], raw: true, nest: true });
+  result.topics = result.rows.map(item => ({ ...item, isMine: Boolean(UserId === item.UserId) }));
+  delete result.rows;
 
   return res.json(result);
 };
@@ -46,9 +46,11 @@ const listAll = async (req, res) => {
 const listMine = async (req, res) => {
   const { user: { id: UserId } } = req;
 
-  const topics = await Topic.findAll({ order: [["createdAt", "DESC"]], where: { UserId: UserId }, include: [User] });
+  const result = await Topic.findAll({ order: [["createdAt", "DESC"]], where: { UserId: UserId }, include: [User], raw: true, nest: true });
+  result.topics = result.rows.map(item => ({ ...item, isMine: Boolean(UserId === item.UserId) }));
+  delete result.rows
 
-  return res.json(topics);
+  return res.json(result);
 };
 
 const findOne = async (req, res) => {

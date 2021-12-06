@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { deleteTopic, saveTopic } from '../services/topics-service';
 import { Mention } from 'primereact/mention';
 
-export default function TopicCard({ id, content, title, user }) {
+export default function TopicCard({ id, content, title, user, isMine }) {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -78,7 +78,7 @@ export default function TopicCard({ id, content, title, user }) {
 
     const modalFooter = !isEditMode ? (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div>
+            <div style={{ visibility: (isMine ? 'visible' : 'hidden') }}>
                 <Button label="Editar" icon="pi pi-pencil" onClick={() => setEditMode(true)} />
                 <Button label="Excluir" icon="pi pi-trash" loading={deleting} className="p-button-danger" onClick={doDeleteTopic} />
             </div>
