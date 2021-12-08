@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { Avatar } from 'primereact/avatar';
 import { Menu } from 'primereact/menu';
 import { Skeleton } from 'primereact/skeleton';
+import Head from 'next/head'
 
 export default function Layout({ children }) {
 
@@ -24,6 +25,12 @@ export default function Layout({ children }) {
     }, []);
 
     return (
+        <>
+        <Head>
+            <title>Topics - { user ? user.name : '' }</title>
+            <meta name="description" content="Compartilhe o que você quiser" />
+            <link rel="icon" href="/favicon.png" />
+        </Head>
         <div id="layout-screen">
             <LateralMenu user={user}/>
             <div id="layout-container">
@@ -33,6 +40,7 @@ export default function Layout({ children }) {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

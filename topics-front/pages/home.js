@@ -49,6 +49,12 @@ const Content = forwardRef((props, ref) => {
         loadTopics();
     }, []);
 
+    useEffect(() => {
+        if (!topics && count === 0) {
+            loadTopics();
+        }
+    }, [topics]);
+
     useImperativeHandle(ref, () => ({
         loadMore() {
             if (!loading && hasMore) {
@@ -90,7 +96,7 @@ const Content = forwardRef((props, ref) => {
         <>
             <TabMenu className="content-tab" model={tabItens} /> 
             <div style={{ padding: 20 }}>
-                <NewTopic onCreate={loadTopics}/>
+                <NewTopic onCreate={() => { setTopics(null); setCount(0); }}/>
                 <br/>
                 <ListTopics/>
                 {loading ? <TopicCardLoader/> : <div/>}
